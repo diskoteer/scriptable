@@ -1,14 +1,17 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: cyan; icon-glyph: magic;
 /******************************************************************************
  * Constants and Configurations
  *****************************************************************************/
 
-// NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
+// NOTE: This script uses the Cache script (https://github.com/diskoteer/scriptable/blob/main/Cache.js)
 // Make sure to add the Cache script in Scriptable as well!
 
 // Cache keys and default location
 const CACHE_KEY_LAST_UPDATED = 'last_updated';
 const CACHE_KEY_LOCATION = 'location';
-const DEFAULT_LOCATION = { latitude: 0, longitude: 0 };
+const DEFAULT_LOCATION = { latitude: XXX, longitude: YYY };
  
 // Font name and size
 const FONT_NAME = 'Menlo';
@@ -18,24 +21,25 @@ const FONT_SIZE = 10;
 const COLORS = {
   bg0: '#29323c',
   bg1: '#1c1c1c',
+//    bg0: 'FFFFFF00',
+//    bg1: 'FFFFFF00',
   personalCalendar: '#5BD2F0',
   workCalendar: '#9D90FF',
   weather: '#FDFD97',
   location: '#FEB144',
-  period: '#FF6663',
+//  period: '#FF6663',
   deviceStats: '#7AE7B9',
 };
 
 // TODO: PLEASE SET THESE VALUES
-const NAME = 'TODO';
-const WEATHER_API_KEY = 'TODO'; // https://home.openweathermap.org/api_keys (account needed)
-const WORK_CALENDAR_NAME = 'TODO';
-const PERSONAL_CALENDAR_NAME = 'TODO';
-const PERIOD_CALENDAR_NAME = 'TODO';
-const PERIOD_EVENT_NAME = 'TODO';
+const NAME = 'MK';
+const WEATHER_API_KEY = 'XXX'; // https://home.openweathermap.org/api_keys (account needed)
+const WORK_CALENDAR_NAME = 'XXX';
+const PERSONAL_CALENDAR_NAME = 'XXX';
+
 
 // Whether or not to use a background image for the widget (if false, use gradient color)
-const USE_BACKGROUND_IMAGE = false;
+const USE_BACKGROUND_IMAGE = true;
 
 /******************************************************************************
  * Initial Setups
@@ -63,7 +67,7 @@ const widget = createWidget(data);
 // Set background image of widget, if flag is true
 if (USE_BACKGROUND_IMAGE) {
   // Determine if our image exists and when it was saved.
-  const files = FileManager.local();
+  const files = FileManager.iCloud();
   const path = files.joinPath(files.documentsDirectory(), 'terminal-widget-background');
   const exists = files.fileExists(path);
 
@@ -134,32 +138,29 @@ function createWidget(data) {
   inputLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 2 - Next Personal Calendar Event
-  const nextPersonalCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
+  const nextPersonalCalendarEventLine = stack.addText(`ЁЯЧУ | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
   nextPersonalCalendarEventLine.textColor = new Color(COLORS.personalCalendar);
   nextPersonalCalendarEventLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 3 - Next Work Calendar Event
-  const nextWorkCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
+  const nextWorkCalendarEventLine = stack.addText(`ЁЯЧУ | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
   nextWorkCalendarEventLine.textColor = new Color(COLORS.workCalendar);
   nextWorkCalendarEventLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 4 - Weather
-  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°), ${data.weather.description}, feels like ${data.weather.feelsLike}°`);
+  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}┬░ (${data.weather.high}┬░-${data.weather.low}┬░), ${data.weather.description}, feels like ${data.weather.feelsLike}┬░`);
   weatherLine.textColor = new Color(COLORS.weather);
   weatherLine.font = new Font(FONT_NAME, FONT_SIZE);
   
   // Line 5 - Location
-  const locationLine = stack.addText(`📍 | ${data.weather.location}`);
+  const locationLine = stack.addText(`ЁЯУН | ${data.weather.location}`);
   locationLine.textColor = new Color(COLORS.location);
   locationLine.font = new Font(FONT_NAME, FONT_SIZE);
 
-  // Line 6 - Period
-  const periodLine = stack.addText(`🩸 | ${data.period}`);
-  periodLine.textColor = new Color(COLORS.period);
-  periodLine.font = new Font(FONT_NAME, FONT_SIZE);
+
 
   // Line 7 - Various Device Stats
-  const deviceStatsLine = stack.addText(`📊 | ⚡︎ ${data.device.battery}%, ☀ ${data.device.brightness}%`);
+  const deviceStatsLine = stack.addText(`ЁЯУК | тЪбя╕О ${data.device.battery}%, тША ${data.device.brightness}%`);
   deviceStatsLine.textColor = new Color(COLORS.deviceStats);
   deviceStatsLine.font = new Font(FONT_NAME, FONT_SIZE);
 
@@ -178,7 +179,7 @@ async function fetchData() {
   const nextPersonalEvent = await fetchNextCalendarEvent(PERSONAL_CALENDAR_NAME);
 
   // Get period data
-  const period = await fetchPeriodData();
+//  const period = await fetchPeriodData();
 
   // Get last data update time (and set)
   const lastUpdated = await getLastUpdated();
@@ -188,7 +189,7 @@ async function fetchData() {
     weather,
     nextWorkEvent,
     nextPersonalEvent,
-    period,
+//    period,
     device: {
       battery: Math.round(Device.batteryLevel() * 100),
       brightness: Math.round(Device.screenBrightness() * 100),
@@ -221,7 +222,7 @@ async function fetchWeather() {
   if (!location) {
     location = DEFAULT_LOCATION;
   }
-  const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=imperial&lang=en&appid=" + WEATHER_API_KEY;
+  const url = "https://api.openweathermap.org/data/2.5/onecall?lat=" + location.latitude + "&lon=" + location.longitude + "&exclude=minutely,hourly,alerts&units=metric&lang=en&appid=" + WEATHER_API_KEY;
   const address = await Location.reverseGeocode(location.latitude, location.longitude);
   const data = await fetchJson(url);
 
@@ -230,7 +231,7 @@ async function fetchWeather() {
   if (!data) {
     return {
       location: cityState,
-      icon: '❓',
+      icon: 'тЭУ',
       description: 'Unknown',
       temperature: '?',
       wind: '?',
@@ -263,37 +264,37 @@ async function fetchWeather() {
  */
 function getWeatherEmoji(code, isNight) {
   if (code >= 200 && code < 300 || code == 960 || code == 961) {
-    return "⛈"
+    return "тЫИ"
   } else if ((code >= 300 && code < 600) || code == 701) {
-    return "🌧"
+    return "ЁЯМз"
   } else if (code >= 600 && code < 700) {
-    return "❄️"
+    return "тЭДя╕П"
   } else if (code == 711) {
-    return "🔥" 
+    return "ЁЯФе" 
   } else if (code == 800) {
-    return isNight ? "🌕" : "☀️" 
+    return isNight ? "ЁЯМХ" : "тШАя╕П" 
   } else if (code == 801) {
-    return isNight ? "☁️" : "🌤"  
+    return isNight ? "тШБя╕П" : "ЁЯМд"  
   } else if (code == 802) {
-    return isNight ? "☁️" : "⛅️"  
+    return isNight ? "тШБя╕П" : "тЫЕя╕П"  
   } else if (code == 803) {
-    return isNight ? "☁️" : "🌥" 
+    return isNight ? "тШБя╕П" : "ЁЯМе" 
   } else if (code == 804) {
-    return "☁️"  
+    return "тШБя╕П"  
   } else if (code == 900 || code == 962 || code == 781) {
-    return "🌪" 
+    return "ЁЯМк" 
   } else if (code >= 700 && code < 800) {
-    return "🌫" 
+    return "ЁЯМл" 
   } else if (code == 903) {
-    return "🥶"  
+    return "ЁЯе╢"  
   } else if (code == 904) {
-    return "🥵" 
+    return "ЁЯе╡" 
   } else if (code == 905 || code == 957) {
-    return "💨" 
+    return "ЁЯТи" 
   } else if (code == 906 || code == 958 || code == 959) {
-    return "🧊" 
+    return "ЁЯзК" 
   } else {
-    return "❓" 
+    return "тЭУ" 
   }
 }
 
@@ -346,27 +347,27 @@ function getCalendarEventTitle(calendarEvent, isWorkEvent) {
 /**
  * Fetch data from the Period calendar and determine number of days until period start/end.
  */
-async function fetchPeriodData() {
-  const periodCalendar = await Calendar.forEventsByTitle(PERIOD_CALENDAR_NAME);
-  const events = await CalendarEvent.between(new Date(), new Date().addDays(30), [periodCalendar]);
-
-  console.log(`Got ${events.length} period events`);
-
-  const periodEvent = events.filter(e => e.title === PERIOD_EVENT_NAME)[0];
-
-  if (periodEvent) {
-    const current = new Date().getTime();
-    if (new Date(periodEvent.startDate).getTime() <= current && new Date(periodEvent.endDate).getTime() >= current) {
-      const timeUntilPeriodEndMs = new Date(periodEvent.endDate).getTime() - current;
-      return `${Math.round(timeUntilPeriodEndMs / 86400000)} days until period ends`; ;
-    } else {
-      const timeUntilPeriodStartMs = new Date(periodEvent.startDate).getTime() - current;
-      return `${Math.round(timeUntilPeriodStartMs / 86400000)} days until period starts`; 
-    }
-  } else {
-    return 'Unknown period data';
-  }
-}
+//async function fetchPeriodData() {
+//  const periodCalendar = await Calendar.forEventsByTitle(PERIOD_CALENDAR_NAME);
+//  const events = await CalendarEvent.between(new Date(), new Date().addDays(30), [periodCalendar]);
+//
+//  console.log(`Got ${events.length} period events`);
+//
+//  const periodEvent = events.filter(e => e.title === PERIOD_EVENT_NAME)[0];
+//
+//  if (periodEvent) {
+//    const current = new Date().getTime();
+//    if (new Date(periodEvent.startDate).getTime() <= current && new Date(periodEvent.endDate).getTime() >= current) {
+//      const timeUntilPeriodEndMs = new Date(periodEvent.endDate).getTime() - current;
+//      return `${Math.round(timeUntilPeriodEndMs / 86400000)} days until period ends`; ;
+//    } else {
+//      const timeUntilPeriodStartMs = new Date(periodEvent.startDate).getTime() - current;
+//      return `${Math.round(timeUntilPeriodStartMs / 86400000)} days until period starts`; 
+//    }
+//  } else {
+//    return 'Unknown period data';
+//  }
+//}
 
 //-------------------------------------
 // Misc. Helper Functions
