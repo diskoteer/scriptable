@@ -32,7 +32,7 @@ const COLORS = {
 };
 
 // TODO: PLEASE SET THESE VALUES
-const NAME = 'MK';
+const NAME = 'XX';
 const WEATHER_API_KEY = 'XXX'; // https://home.openweathermap.org/api_keys (account needed)
 const WORK_CALENDAR_NAME = 'XXX';
 const PERSONAL_CALENDAR_NAME = 'XXX';
