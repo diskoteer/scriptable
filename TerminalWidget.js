@@ -141,12 +141,12 @@ function createWidget(data) {
   inputLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 2 - Next Personal Calendar Event
-  const nextPersonalCalendarEventLine = stack.addText(`ЁЯЧУ | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
+  const nextPersonalCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextPersonalEvent, false)}`);
   nextPersonalCalendarEventLine.textColor = new Color(COLORS.personalCalendar);
   nextPersonalCalendarEventLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 3 - Next Work Calendar Event
-  const nextWorkCalendarEventLine = stack.addText(`ЁЯЧУ | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
+  const nextWorkCalendarEventLine = stack.addText(`🗓 | ${getCalendarEventTitle(data.nextWorkEvent, true)}`);
   nextWorkCalendarEventLine.textColor = new Color(COLORS.workCalendar);
   nextWorkCalendarEventLine.font = new Font(FONT_NAME, FONT_SIZE);
 
@@ -156,14 +156,12 @@ function createWidget(data) {
   weatherLine.font = new Font(FONT_NAME, FONT_SIZE);
   
   // Line 5 - Location
-  const locationLine = stack.addText(`ЁЯУН | ${data.weather.location}`);
+  const locationLine = stack.addText(`📍 | ${data.weather.location}`);
   locationLine.textColor = new Color(COLORS.location);
   locationLine.font = new Font(FONT_NAME, FONT_SIZE);
 
-
-
   // Line 7 - Various Device Stats
-  const deviceStatsLine = stack.addText(`ЁЯУК | тЪбя╕О ${data.device.battery}%, тША ${data.device.brightness}%`);
+  const deviceStatsLine = stack.addText(`📊 | ⚡︎ ${data.device.battery}%, ☀ ${data.device.brightness}%`);
   deviceStatsLine.textColor = new Color(COLORS.deviceStats);
   deviceStatsLine.font = new Font(FONT_NAME, FONT_SIZE);
 
@@ -267,37 +265,37 @@ async function fetchWeather() {
  */
 function getWeatherEmoji(code, isNight) {
   if (code >= 200 && code < 300 || code == 960 || code == 961) {
-    return "тЫИ"
+    return "⛈"
   } else if ((code >= 300 && code < 600) || code == 701) {
-    return "ЁЯМз"
+    return "🌧"
   } else if (code >= 600 && code < 700) {
-    return "тЭДя╕П"
+    return "❄️"
   } else if (code == 711) {
-    return "ЁЯФе" 
+    return "🔥" 
   } else if (code == 800) {
-    return isNight ? "ЁЯМХ" : "тШАя╕П" 
+    return isNight ? "🌕" : "☀️" 
   } else if (code == 801) {
-    return isNight ? "тШБя╕П" : "ЁЯМд"  
+    return isNight ? "☁️" : "🌤"  
   } else if (code == 802) {
-    return isNight ? "тШБя╕П" : "тЫЕя╕П"  
+    return isNight ? "☁️" : "⛅️"  
   } else if (code == 803) {
-    return isNight ? "тШБя╕П" : "ЁЯМе" 
+    return isNight ? "☁️" : "🌥" 
   } else if (code == 804) {
-    return "тШБя╕П"  
+    return "☁️"  
   } else if (code == 900 || code == 962 || code == 781) {
-    return "ЁЯМк" 
+    return "🌪" 
   } else if (code >= 700 && code < 800) {
-    return "ЁЯМл" 
+    return "🌫" 
   } else if (code == 903) {
-    return "ЁЯе╢"  
+    return "🥶"  
   } else if (code == 904) {
-    return "ЁЯе╡" 
+    return "🥵" 
   } else if (code == 905 || code == 957) {
-    return "ЁЯТи" 
+    return "💨" 
   } else if (code == 906 || code == 958 || code == 959) {
-    return "ЁЯзК" 
+    return "🧊" 
   } else {
-    return "тЭУ" 
+    return "❓" 
   }
 }
 
