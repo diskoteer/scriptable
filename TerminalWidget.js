@@ -151,7 +151,7 @@ function createWidget(data) {
   nextWorkCalendarEventLine.font = new Font(FONT_NAME, FONT_SIZE);
 
   // Line 4 - Weather
-  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}┬░ (${data.weather.high}┬░-${data.weather.low}┬░), ${data.weather.description}, feels like ${data.weather.feelsLike}┬░`);
+  const weatherLine = stack.addText(`${data.weather.icon} | ${data.weather.temperature}° (${data.weather.high}°-${data.weather.low}°), ${data.weather.description}, feels like ${data.weather.feelsLike}°`);
   weatherLine.textColor = new Color(COLORS.weather);
   weatherLine.font = new Font(FONT_NAME, FONT_SIZE);
   
@@ -232,7 +232,7 @@ async function fetchWeather() {
   if (!data) {
     return {
       location: cityState,
-      icon: 'тЭУ',
+      icon: '❓',
       description: 'Unknown',
       temperature: '?',
       wind: '?',
