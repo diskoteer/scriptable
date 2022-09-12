@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: yellow; icon-glyph: bolt;
+// icon-color: cyan; icon-glyph: sun;
 /*><><><><><><><><><><><><><><><><
 Source of this script was originally from:
 https://www.notion.so/Weather-Script-a5b503ffcd684b719e16f47cd82f7622 note:the linked script has been removed from Notion (not sure why or when)
@@ -12,12 +12,12 @@ modifications and new features added by mvan231
 ---
 version info
 ---
-v1.4
-- iOS 15 SF Symbol workaround commented out after Scriptable app update
+v1.5
+- Added proper caching of weather data in case of no connection to internet so information will still be displayed
 
 ><><><><><><><><><><><*/
 //check for an update quick before building the widget
-let needUpdated = await updateCheck(1.4)
+let needUpdated = await updateCheck(1.5)
 
 /*><><><><><><><><><><><
 
@@ -133,8 +133,16 @@ log(latLong)
 const LAT = latLong.latitude
 const LON = latLong.longitude
 
-var response = await Location.reverseGeocode(LAT, LON)
-var LOCATION_NAME = response[0].postalAddress.city
+//now using try catcg for reverseGeocoding in case of no response
+try{
+  var response = await Location.reverseGeocode(LAT, LON)
+  var LOCATION_NAME = response[0].postalAddress.city
+}catch(e){
+  //need to add info here to grabbed cached location name
+  var LOCATION_NAME = 'Cached Data'
+
+}
+
 
 const locale = "en"
 const nowstring = (param=='daily')?"Today" : "Now"
@@ -158,7 +166,14 @@ const mediumWidgetWidth = 584
 
 const accentColor = new Color(Color.green().hex/*"#ffa300""#B8B8B8"*/, 1)
 
-// Set background image of widget, if flag is true
+// Fetch background image from module no-background
+const RESET_BACKGROUND = !config.runsInWidget
+const { transparent } = importModule('no-background')
+// const widget = new ListWidget()
+
+//const widget = createWidget(data);
+widget.backgroundImage = await transparent(Script.name(), RESET_BACKGROUND)
+/*  // Set background image of widget, if flag is true
 if (USE_BACKGROUND_IMAGE) {
   // Determine if our image exists and when it was saved.
   const path = fm.joinPath(offlinePath, 'Weather-Overview-Background');
@@ -181,7 +196,7 @@ if (USE_BACKGROUND_IMAGE) {
     console.log(path);
     fm.writeImage(path, img);
   }
-}
+}*/
 
 
 const locationNameCoords = new Point(30, showWindspeed?5:25)//25)
@@ -199,18 +214,16 @@ drawContext.setTextAlignedCenter()
 
 if(config.widgetFamily == 'large')throw new Error('This widget is not designed for the large size widget, try medium or small instead')
 
+let cache = localFm.joinPath(cachePath, "lastread")
 try {
-  weatherData = await new Request("https://api.openweathermap.org/data/2.5/onecall?lat=" + LAT + "&lon=" + LON + "&exclude=minutely&units=" + units + "&lang=" + locale + "&appid=" + API_KEY).loadJSON();
+  log('trying')
+   weatherData = await new Request("https://api.openweathermap.org/data/2.5/onecall?lat=" + LAT + "&lon=" + LON + "&exclude=minutely&units=" + units + "&lang=" + locale + "&appid=" + API_KEY).loadJSON()
+   localFm.writeString(cache, JSON.stringify(weatherData))
 } catch(e) {
   console.log("Offline mode")
-  try {
-    await fm.downloadFileFromiCloud(fm.joinPath(cachePath, "lastread" + "_" + LAT + "_" + LON));
-    let raw = fm.readString(fm.joinPath(cachePath, "lastread"+"_"+LAT+"_"+LON));
+   let raw = localFm.readString(cache);
     weatherData = JSON.parse(raw);
-    usingCachedData = true;
-  } catch(e2) {
-    console.log("Error: No offline data cached")
-  }
+   usingCachedData = true
 }
 
 //log(JSON.stringify(weatherData, null, 2))
@@ -439,7 +452,8 @@ for (let i = 0; i <= hoursToShow; i++) {
 
 let weatherUI = widget.addImage(drawContext.getImage())
     weatherUI.centerAlignImage()
-widget.url = 'https://openweathermap.org'
+// widget.url = 'OpenWeather://'
+widget.url = 'shortcuts://run-shortcut?name=Open%20Weather'
 Script.complete()
 widget.presentMedium()
 
@@ -464,7 +478,7 @@ function drawPercentageLines() {
     pa.move(new Point(xStart, yPt))
     pa.addLine(new Point((spaceBetweenDays*hoursToShow)+xStart+barWidth, yPt))
     drawContext.setTextAlignedRight()
-    drawContext.setTextColor(Color.lightGray())
+    drawContext.setTextColor(Color.white())
     tex = String(100-(i*25))+'%'
     drawContext.setFont(Font.boldSystemFont(10))
     drawContext.drawTextInRect(String(tex), new Rect(0, yPt-6, 30, 10))
@@ -481,7 +495,7 @@ function drawAmountLabels() {
   for (let i = 0; i<=4; i++){
     yPt = (((220-60)/4)*i)+60
     drawContext.setTextAlignedLeft()
-    drawContext.setTextColor(Color.lightGray())
+    drawContext.setTextColor(Color.white())
     tex = String((maxPrecip-(i*(maxPrecip/4))).toFixed(2))
     drawContext.setFont(Font.boldSystemFont(10))
     drawContext.drawTextInRect(String(tex), new Rect((spaceBetweenDays*hoursToShow)+xStart+barWidth, yPt-6, 30, 10))
