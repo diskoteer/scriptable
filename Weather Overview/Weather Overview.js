@@ -178,7 +178,7 @@ const accentColor = new Color(Color.green().hex/*"#ffa300""#B8B8B8"*/, 1)
 // Set background image of widget, if flag is true
 if (USE_BACKGROUND_IMAGE) {
   // Determine if our image exists and when it was saved.
-  const path = fm.joinPath(offlinePath, 'Weather-Overview-Background');
+  const path = fm.documentsDirectory()+'/Weather-Overview-Background';
   const exists = fm.fileExists(path);
 
   // If it exists and we're running in the widget, use photo from cache
